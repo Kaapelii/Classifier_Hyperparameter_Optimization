@@ -26,6 +26,7 @@ env/
 ENV/
 .env/
 .venv/
+fake_news_classifier/
 
 # IDE
 .idea/
