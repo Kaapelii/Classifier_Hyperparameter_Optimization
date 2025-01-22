@@ -21,18 +21,6 @@ class TokenLevelFeatureExtractor(BaseEstimator, TransformerMixin):
         return features
     
 
-class DocumentLevelTFIDFExtractor(BaseEstimator, TransformerMixin):
-    def __init__(self, tfidf_matrix):
-        self.tfidf_matrix = tfidf_matrix
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        print(f"DocumentLevelTFIDFExtractor: {self.tfidf_matrix.shape[0]} samples")
-        return self.tfidf_matrix
-    
-
 class DocumentPreprocessor(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
