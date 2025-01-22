@@ -1,30 +1,30 @@
 from trankit import Pipeline
 import pandas as pd
+import json
 
 p = Pipeline('english')
 
-def preprocess_data(data):
+def preprocess_data(data, number_of_rows):
     # Combine title and text into a single column
     data['combined_text'] = data['title'] + ' ' + data['text']
     data.drop(columns=['title', 'text'], inplace=True)
 
     data['combined_text'] = data['combined_text'].str.lower()
 
-    data = data.head(100)
+    data = data.head(number_of_rows)
 
     preprocessed_data = []
     total_docs = len(data['combined_text'])
     progress_interval = max(1, total_docs // 20)  # 5% of total documents
 
+    # Note: Computationally expensive as it processes at token level
     for idx, doc in enumerate(data['combined_text']):
         processed_doc = p(doc)
+        sentences = []
         for sentence in processed_doc['sentences']:
+            tokens = []
             for token in sentence['tokens']:
-                preprocessed_data.append({
-                    'doc_index': idx,
-                    'doc_text': processed_doc['text'],
-                    'sentence_id': sentence['id'],
-                    'sentence_text': sentence['text'],
+                tokens.append({
                     'token_id': token['id'],
                     'token_text': token['text'],
                     'upos': token.get('upos', ''),
@@ -37,6 +37,17 @@ def preprocess_data(data):
                     'token_dspan': token.get('dspan', (0, 0)),
                     'token_span': token.get('span', (0, 0))
                 })
+            sentences.append({
+                'sentence_id': sentence['id'],
+                'sentence_text': sentence['text'],
+                'tokens': tokens
+            })
+        preprocessed_data.append({
+            'doc_index': idx,
+            'doc_text': processed_doc['text'],
+            'label': data['label'].iloc[idx],
+            'sentences': sentences
+        })
         if (idx + 1) % progress_interval == 0 or (idx + 1) == total_docs:
             print(f"Processed {idx + 1}/{total_docs} documents")
 
@@ -45,5 +56,16 @@ def preprocess_data(data):
     return preprocessed_df
 
 def save_data(data, filepath):
-    data.to_csv(filepath, sep=';', index=False)
-    print(f"Preprocessed data saved to {filepath}")
+    try:
+        # Convert DataFrame to list of dictionaries
+        data_list = data.to_dict(orient='records')
+        
+        # Write list of dictionaries as JSON array
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(data_list, f, indent=2, ensure_ascii=False)
+        
+        print(f"Preprocessed data saved to {filepath}")
+        
+    except Exception as e:
+        print(f"Error saving data: {str(e)}")
+        raise
