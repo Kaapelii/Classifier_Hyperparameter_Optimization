@@ -1,16 +1,20 @@
 from trankit import Pipeline
 import pandas as pd
 import json
+import config
 
 p = Pipeline('english')
 
 def preprocess_data(data, number_of_rows):
-    # Combine title and text into a single column
-    data['combined_text'] = data['title'] + ' ' + data['text']
-    data.drop(columns=['title', 'text'], inplace=True)
+    # Combine columns into a single text column depending on config.py
+    if config.TWO_COLUMNS:
+        data['combined_text'] = data[config.DATA_COLUMN_NAME_1] + ' ' + data[config.DATA_COLUMN_NAME_2]
+        data.drop(columns=[config.DATA_COLUMN_NAME_1, config.DATA_COLUMN_NAME_2], inplace=True)
+    else:
+        data['combined_text'] = data[config.DATA_COLUMN_NAME_1]
+        data.drop(columns=[config.DATA_COLUMN_NAME_1], inplace=True)
 
     data['combined_text'] = data['combined_text'].str.lower()
-
     data = data.head(number_of_rows)
 
     preprocessed_data = []
@@ -57,10 +61,8 @@ def preprocess_data(data, number_of_rows):
 
 def save_data(data, filepath):
     try:
-        # Convert DataFrame to list of dictionaries
         data_list = data.to_dict(orient='records')
         
-        # Write list of dictionaries as JSON array
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(data_list, f, indent=2, ensure_ascii=False)
         

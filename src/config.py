@@ -7,15 +7,16 @@ RAW_DATA_DIR = os.path.join(BASE_DIR, DATA_DIR, 'raw')
 PROCESSED_DATA_DIR = os.path.join(BASE_DIR, DATA_DIR, 'processed')
 OUTPUTS = os.path.join(BASE_DIR, 'output')
 
-
 # Filenames
 RAW_DATA_FILENAME = 'fake-news.csv'
 PROCESSED_DATA_FILENAME = 'preprocessed_data.json'
 
-
 # Preprocessing
 PREPROCESS = False
 NUMBER_OF_ROWS = 100
+TWO_COLUMNS = True
+DATA_COLUMN_NAME_1 = 'title'
+DATA_COLUMN_NAME_2 = 'text'
 
 # Model training
 TRAIN_MODEL = True  # Train the model?
@@ -32,7 +33,6 @@ OPTIMIZATION = 4
 # Paths
 RAW_DATA_PATH = os.path.join(BASE_DIR, RAW_DATA_DIR, RAW_DATA_FILENAME)
 PROCESSED_DATA_PATH = os.path.join(BASE_DIR, PROCESSED_DATA_DIR, PROCESSED_DATA_FILENAME)
-
 
 #Pipelines
 PIPELINE_PATH = os.path.join(OUTPUTS, 'pipeline')
