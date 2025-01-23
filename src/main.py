@@ -1,6 +1,5 @@
 import config
-from utils import make_dirs
-from data_loader import load_data
+from utils import make_dirs, load_data
 from preprocess import preprocess_data, save_data
 from Pipeline.feature_extraction import create_tfidf_matrix
 from Pipeline.classifier_pipeline import create_pipeline, create_optimized_pipeline
@@ -10,15 +9,14 @@ import joblib
 import os
 
 def main():
+    # Make directories and load csv data
     make_dirs()
-
     data = load_data(config.RAW_DATA_PATH)
     if data is not None:
         # Preprocess depending on config.py
         if config.PREPROCESS:
             data = preprocess_data(data, config.NUMBER_OF_ROWS)
             save_data(data, config.PROCESSED_DATA_PATH)
-            print(data.head())
         else:
             data = pd.read_json(config.PROCESSED_DATA_PATH, orient='records')
         
