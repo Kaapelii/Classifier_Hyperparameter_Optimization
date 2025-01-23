@@ -12,15 +12,16 @@ RAW_DATA_FILENAME = 'fake-news.csv'
 PROCESSED_DATA_FILENAME = 'preprocessed_data.json'
 
 # Preprocessing
-PREPROCESS = False
-NUMBER_OF_ROWS = 100
-TWO_COLUMNS = True
-DATA_COLUMN_NAME_1 = 'title'
-DATA_COLUMN_NAME_2 = 'text'
+PREPROCESS = True # Preprocess the data?
+NUMBER_OF_ROWS = 200 # Limit number of rows to preprocess (0 for all rows)
+TWO_COLUMNS = True # Combine two columns into one? Set False if dataset has only one column and label
+DATA_COLUMN_NAME_1 = 'title' # Data column name for the first column
+DATA_COLUMN_NAME_2 = 'text' # Data column name for the second column
+DATA_LABEL = 'label' # Data column name for the label
 
 # Model training
-TRAIN_MODEL = True  # Train the model?
-TRAIN_OPTIMIZED_MODEL = True # Train the optimized model?
+TRAIN_MODEL = False  # Train the model?
+TRAIN_OPTIMIZED_MODEL = False # Train the optimized model?
 
 # Optimization methods:
 # 1: GridSearchCV
