@@ -1,5 +1,6 @@
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import OneHotEncoder
 from Pipeline.transformers import TokenLevelFeatureExtractor, DocumentPreprocessor
 
 def create_feature_union():
@@ -10,19 +11,19 @@ def create_feature_union():
         ])),
         ('ner', Pipeline([
             ('extract', TokenLevelFeatureExtractor('ner')),
-            ('tfidf', TfidfVectorizer())
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))
         ])),
         ('upos', Pipeline([
             ('extract', TokenLevelFeatureExtractor('upos')),
-            ('tfidf', TfidfVectorizer())
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))
         ])),
         ('xpos', Pipeline([
             ('extract', TokenLevelFeatureExtractor('xpos')),
-            ('tfidf', TfidfVectorizer())
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))
         ])),
         ('lemma', Pipeline([
             ('extract', TokenLevelFeatureExtractor('lemma')),
-            ('tfidf', TfidfVectorizer())
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))
         ]))
     ])   
     return feature_union
