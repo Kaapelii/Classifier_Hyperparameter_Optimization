@@ -6,6 +6,7 @@ from sklearn.model_selection import GridSearchCV, HalvingGridSearchCV, Randomize
 from Pipeline.feature_union import create_feature_union
 import joblib
 import config
+import time
 
 def create_pipeline():
     feature_union = create_feature_union()
@@ -18,24 +19,28 @@ def create_pipeline():
     
     return pipeline
 
-def create_optimized_pipeline(param_grid, type):
+def create_optimized_pipeline(param_grid, type, X, y):
     pipeline = create_pipeline()
     
-    if type == 1 or type == 5:
-        grid_search = GridSearchCV(pipeline, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2, error_score='raise', random_state=config.RANDOM_STATE)
-        return grid_search, "GridSearchCV"
+    if type == 1:
+        grid_search = GridSearchCV(pipeline, return_train_score=True, param_grid=param_grid, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, verbose=config.VERBOSE, error_score='raise')
+        search_name = "GridSearchCV"
+    elif type == 2:
+        grid_search = HalvingGridSearchCV(pipeline, return_train_score=True, param_grid=param_grid, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, verbose=config.VERBOSE, error_score='raise', random_state=config.RANDOM_STATE)
+        search_name = "HalvingGridSearchCV"
+    elif type == 3:
+        grid_search = RandomizedSearchCV(pipeline, return_train_score=True, param_distributions=param_grid, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, verbose=config.VERBOSE, error_score='raise', random_state=config.RANDOM_STATE)
+        search_name = "RandomizedSearchCV"
+    elif type == 4:
+        grid_search = HalvingRandomSearchCV(pipeline, return_train_score=True, param_distributions=param_grid, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, verbose=config.VERBOSE, error_score='raise', random_state=config.RANDOM_STATE)
+        search_name = "HalvingRandomSearchCV"
+    else:
+        return None, "No valid type provided", 0
     
-    if type == 2 or type == 5:
-        grid_search = HalvingGridSearchCV(pipeline, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2, error_score='raise', random_state=config.RANDOM_STATE)
-        return grid_search, "HalvingGridSearchCV"
+    start_time = time.time()
+    grid_search.fit(X, y)  
+    end_time = time.time()
+    time_spent = end_time - start_time
+    print(f"Time spent on {search_name}: {time_spent}")
     
-    if type == 3 or type == 5:
-        grid_search = RandomizedSearchCV(pipeline, param_distributions=param_grid, cv=5, n_jobs=-1, verbose=2, error_score='raise', random_state=config.RANDOM_STATE)
-        return grid_search, "RandomizedSearchCV"
-    
-    if type == 4 or type == 5:
-        grid_search = HalvingRandomSearchCV(pipeline, param_distributions=param_grid, cv=5, n_jobs=-1, verbose=2, error_score='raise', random_state=config.RANDOM_STATE)
-        return grid_search, "HalvingRandomSearchCV"
-    
-    return grid_search
-
+    return grid_search, search_name, time_spent
