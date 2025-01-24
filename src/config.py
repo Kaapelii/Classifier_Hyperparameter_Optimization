@@ -10,18 +10,19 @@ OUTPUTS = os.path.join(BASE_DIR, 'output')
 # Filenames
 RAW_DATA_FILENAME = 'fake-news.csv'
 PROCESSED_DATA_FILENAME = 'preprocessed_data.json'
+SCORES = 'scores.json'
 
 # Preprocessing
-PREPROCESS = True # Preprocess the data?
-NUMBER_OF_ROWS = 200 # Limit number of rows to preprocess (0 for all rows)
+PREPROCESS = False # Preprocess the data?
+NUMBER_OF_ROWS = 50 # Limit number of rows to preprocess (0 for all rows)
 TWO_COLUMNS = True # Combine two columns into one? Set False if dataset has only one column and label
 DATA_COLUMN_NAME_1 = 'title' # Data column name for the first column
 DATA_COLUMN_NAME_2 = 'text' # Data column name for the second column
 DATA_LABEL = 'label' # Data column name for the label
 
 # Model training
-TRAIN_MODEL = False  # Train the model?
-TRAIN_OPTIMIZED_MODEL = False # Train the optimized model?
+TRAIN_MODEL = True  # Train the model?
+TRAIN_OPTIMIZED_MODEL = True # Train the optimized model?
 
 # Optimization methods:
 # 1: GridSearchCV
@@ -29,11 +30,16 @@ TRAIN_OPTIMIZED_MODEL = False # Train the optimized model?
 # 3: RandomizedSearchCV
 # 4: HalvingRandomSearchCV
 # 5: ALL (run all the above methods)
-OPTIMIZATION = 4  
+OPTIMIZATION = 4
+CROSS_VALIDATIONS = 5  
+NJOBS = -1 # Number of jobs to run in parallel. -1 = all processors.
+VERBOSE = 1 # Verbosity level for the optimization methods (0, 1, 2, 3)
+
 
 # Paths
 RAW_DATA_PATH = os.path.join(BASE_DIR, RAW_DATA_DIR, RAW_DATA_FILENAME)
 PROCESSED_DATA_PATH = os.path.join(BASE_DIR, PROCESSED_DATA_DIR, PROCESSED_DATA_FILENAME)
+SCORES_PATH = os.path.join(OUTPUTS, SCORES)
 
 #Pipelines
 PIPELINE_PATH = os.path.join(OUTPUTS, 'pipeline')
