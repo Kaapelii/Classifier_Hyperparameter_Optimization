@@ -17,8 +17,7 @@ class TokenLevelFeatureExtractor(BaseEstimator, TransformerMixin):
                     doc_features.append(token[self.feature_name])
             # Join the token features into a single string
             features.append(' '.join(doc_features))
-        print(f"TokenLevelFeatureExtractor ({self.feature_name}): {len(features)} samples")
-        return features
+        return pd.Series(features).values.reshape(-1, 1)
     
 
 class DocumentPreprocessor(BaseEstimator, TransformerMixin):
@@ -33,5 +32,4 @@ class DocumentPreprocessor(BaseEstimator, TransformerMixin):
                 for token in sentence['tokens']:
                     doc_tokens.append(token['token_text'])
             documents.append(' '.join(doc_tokens))
-        print(f"DocumentPreprocessor: {len(documents)} samples")
         return documents
