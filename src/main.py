@@ -3,6 +3,7 @@ from utils import make_dirs, load_data, save_scores, extract_best_fold_scores
 from preprocess import preprocess_data, save_data
 from Pipeline.classifier_pipeline import create_pipeline, create_optimized_pipeline
 from sklearn.model_selection import cross_val_score
+
 import pandas as pd
 import numpy as np
 import joblib
@@ -42,22 +43,12 @@ def main():
             if config.OPTIMIZATION == 5:
                 for opt_type in range(1, 5):
                     pipeline, type_name, time = create_optimized_pipeline(config.PARAM_GRID, opt_type, X, y)
-                    os.makedirs(config.PIPELINE_PATH, exist_ok=True)
-                    joblib.dump(pipeline, os.path.join(config.PIPELINE_PATH, 'pipeline_' + type_name + '.pkl'))
-                    
                     fold_scores, parameters, total_fits = extract_best_fold_scores(pipeline)
                     save_scores(fold_scores, type_name, config.SCORES_PATH, parameters, time, total_fits)
-                    print(f"{type_name} best parameters: {pipeline.best_params_}")
             else:
                 pipeline, type_name, time = create_optimized_pipeline(config.PARAM_GRID, config.OPTIMIZATION, X, y)
-                joblib.dump(pipeline, os.path.join(config.PIPELINE_PATH, 'pipeline_' + type_name + '.pkl'))
-
                 fold_scores, parameters, total_fits = extract_best_fold_scores(pipeline)
                 save_scores(fold_scores, type_name, config.SCORES_PATH, parameters, time, total_fits)
-
-                print(f"{type_name} optimized pipeline trained and saved.")
-                print(f"{type_name} best parameters: {pipeline.best_params_}")
-                print (f"{type_name} best score: {pipeline.best_score_}")
         
     else:
         print("Failed to load data.")
