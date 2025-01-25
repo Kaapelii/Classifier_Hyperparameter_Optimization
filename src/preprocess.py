@@ -13,13 +13,13 @@ def preprocess_data(data, number_of_rows):
     
     # Combine columns into a single text column depending on config.py
     if config.TWO_COLUMNS:
-        data['combined_text'] = data[config.DATA_COLUMN_NAME_1] + ' ' + data[config.DATA_COLUMN_NAME_2]
+        data.loc[:, 'combined_text'] = data[config.DATA_COLUMN_NAME_1] + ' ' + data[config.DATA_COLUMN_NAME_2]
         data.drop(columns=[config.DATA_COLUMN_NAME_1, config.DATA_COLUMN_NAME_2], inplace=True)
     else:
-        data['combined_text'] = data[config.DATA_COLUMN_NAME_1]
+        data.loc[:, 'combined_text'] = data[config.DATA_COLUMN_NAME_1]
         data.drop(columns=[config.DATA_COLUMN_NAME_1], inplace=True)
 
-    data['combined_text'] = data['combined_text'].str.lower()
+    data.loc[:, 'combined_text'] = data['combined_text'].str.lower()
 
     preprocessed_data = []
     total_docs = len(data['combined_text'])
