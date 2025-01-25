@@ -14,6 +14,8 @@ def make_dirs():
     #OUTPUTS
     os.makedirs(config.OUTPUTS, exist_ok=True)
     os.makedirs(config.PIPELINE_PATH, exist_ok=True)
+    os.makedirs(config.HEATMAP_PATH, exist_ok=True)
+    
 
 def load_data(filepath):
     try:
