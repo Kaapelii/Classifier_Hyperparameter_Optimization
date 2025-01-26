@@ -1,46 +1,58 @@
 import os
-import joblib
 import matplotlib.pyplot as plt
-from sklearn.model_selection import LearningCurveDisplay, learning_curve
-import config
-
-        
+from sklearn.model_selection import LearningCurveDisplay
+import joblib
+import config  
 
 def plot_learning_curves():
-    model_files = [f for f in os.listdir(config.PIPELINE_PATH) if f.endswith('.pkl')]
+    model_files = [f for f in os.listdir(config.PIPELINE_DIR) if f.endswith('.pkl')]
     
     if not model_files:
         print("No models found in the specified directory.")
         return
     
     X, y = joblib.load(os.path.join(config.PROCESSED_DATA_PKL_PATH))
-    
-    # Create a single figure and axis
+
     fig, ax = plt.subplots(figsize=(10, 8))
+    model_colors = {
+        "default": ("blue", "cyan"),  
+        "pipeline_GridSearchCV.pkl": ("darkgreen", "forestgreen"),
+        "pipeline_HalvingGridSearchCV.pkl": ("limegreen", "mediumseagreen"),
+        "pipeline_RandomizedSearchCV.pkl": ("brown", "saddlebrown"),
+        "pipeline_HalvingRandomSearchCV.pkl": ("orange", "darkorange"),
+    }
     
     for model_file in model_files:
-        model_path = os.path.join(config.PIPELINE_PATH, model_file)
+        model_path = os.path.join(config.PIPELINE_DIR, model_file)
         model = joblib.load(model_path)
         
-        train_sizes, train_scores, test_scores = learning_curve(
-            model , X, y, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, random_state=config.RANDOM_STATE
+        # Determine the color for the model
+        if model_file in model_colors:
+            train_color, test_color = model_colors[model_file]
+        else:
+            train_color, test_color = model_colors["default"] 
+
+        if config.PLOT_TEST_LINES:
+            score_type = "both"
+        else:
+            score_type = "train"
+        
+        # Plot the learning curve 
+        display = LearningCurveDisplay.from_estimator(
+            model, X, y, ax=ax, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, std_display_style=None, score_type=score_type, train_sizes=config.TRAIN_SIZES
         )
         
-        train_scores_mean = train_scores.mean(axis=1)
-        test_scores_mean = test_scores.mean(axis=1)
-        
-        ax.plot(train_sizes, train_scores_mean, 'o-', label=f"{os.path.splitext(model_file)[0]} Train")
-        ax.plot(train_sizes, test_scores_mean, 'o-', label=f"{os.path.splitext(model_file)[0]} Test")
+        # Apply colors to train and test lines
+        for line, label in zip(display.lines_, ["train", "test"]):
+            line.set_color(train_color if label == "train" else test_color)
+            line.set_linewidth(2.5)  
+            line.set_label(f"{model_file} ({label})")
+    
 
-    # Add legend manually with model names
-    ax.legend(loc="best")
-
-    # Customize plot
-    plt.title("Learning Curves for All Models")
-    plt.xlabel("Training Examples")
-    plt.ylabel("Score")
-    plt.grid()
-    plt.show()
-
-if __name__ == "__main__":
-    plot_learning_curves()
+    ax.legend(loc="upper left", fontsize=10)
+    ax.set_title("Learning Curves", fontsize=16)
+    ax.set_xlabel("Training Examples", fontsize=14)
+    ax.set_ylabel("Score", fontsize=14)
+    
+    plt.savefig(config.LEARNING_CURVE_PATH)
+    plt.close(fig)
