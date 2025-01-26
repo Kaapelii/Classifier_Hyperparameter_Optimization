@@ -74,5 +74,5 @@ def make_heatmap(gridsearch, time_spent, is_successive_halving=False, name="Opti
     cbar_ax.set_ylabel("mean_test_score", rotation=-90, va="bottom", fontsize=10)
 
     ax.set_title(f"{name}\ntime = {time_spent:.3f}s", fontsize=12)
-    plt.savefig(os.path.join(config.HEATMAP_PATH, 'Heatmap_' + name + '.png'))
+    plt.savefig(os.path.join(config.HEATMAP_DIR, 'Heatmap_' + name + '.png'))
     plt.close(fig)

@@ -13,8 +13,12 @@ def make_dirs():
 
     #OUTPUTS
     os.makedirs(config.OUTPUTS, exist_ok=True)
-    os.makedirs(config.PIPELINE_PATH, exist_ok=True)
-    os.makedirs(config.HEATMAP_PATH, exist_ok=True)
+    if config.TRAIN_MODEL or config.TRAIN_OPTIMIZED_MODEL:
+        os.makedirs(config.PIPELINE_DIR, exist_ok=True)
+    if config.CREATE_HEATMAP:
+        os.makedirs(config.HEATMAP_DIR, exist_ok=True)
+    if config.PLOT_LEARNING_CURVE:
+        os.makedirs(config.LEARNING_CURVE_DIR, exist_ok=True)
     
 
 def load_data(filepath):
