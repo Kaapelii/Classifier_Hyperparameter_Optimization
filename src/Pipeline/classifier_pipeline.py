@@ -79,8 +79,7 @@ def create_optimized_pipeline(param_grid, type, X, y):
     end_time = time.time()
     time_spent = end_time - start_time
     print(f"Time spent on {search_name}: {time_spent}")
-
-    joblib.dump(pipeline, os.path.join(config.PIPELINE_PATH, 'pipeline_' + search_name + '.pkl'))
+    joblib.dump(grid_search.best_estimator_, os.path.join(config.PIPELINE_DIR, 'pipeline_' + search_name + '.pkl'))
 
     if config.CREATE_HEATMAP:
         make_heatmap(grid_search, time_spent, is_successive_halving, search_name)
