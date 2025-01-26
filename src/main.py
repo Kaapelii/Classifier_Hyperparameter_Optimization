@@ -3,6 +3,7 @@ from utils import make_dirs, load_data, save_scores, extract_best_fold_scores
 from preprocess import preprocess_data, save_data
 from Pipeline.classifier_pipeline import create_pipeline, create_optimized_pipeline
 from sklearn.model_selection import cross_val_score
+from Analytics.learningcurve import plot_learning_curves
 
 import pandas as pd
 import numpy as np
@@ -10,11 +11,9 @@ import joblib
 import os
 
 def main():
-    # Make directories and load csv data
     make_dirs()
     data = load_data(config.RAW_DATA_PATH)
     if data is not None:
-        # Preprocess depending on config.py
         if config.PREPROCESS:
             data = preprocess_data(data, config.NUMBER_OF_ROWS)
             save_data(data, config.PROCESSED_DATA_PATH)
@@ -26,6 +25,10 @@ def main():
         X = data.drop(columns=['label'])
         X = X.to_dict(orient='records')
 
+        if config.PLOT_LEARNING_CURVE:
+            # Save X and y for later use
+            joblib.dump((X, y), os.path.join(config.PROCESSED_DATA_PKL_PATH))
+
         # Create and train the pipeline depending on config.py
         if config.TRAIN_MODEL:
             pipeline = create_pipeline()
@@ -36,7 +39,7 @@ def main():
             classifier_params = {key: value for key, value in pipeline.get_params().items() if 'classifier__' in key}
 
             save_scores(scores, "default_pipeline", config.SCORES_PATH, classifier_params) 
-            joblib.dump(pipeline, config.DEFAULT_PIPELINE_PATH)
+            joblib.dump(pipeline, config.DEFAULT_PIPELINE_DIR)
             print("Pipeline trained and saved.")
 
         if config.TRAIN_OPTIMIZED_MODEL:
@@ -49,6 +52,9 @@ def main():
                 pipeline, type_name, time = create_optimized_pipeline(config.PARAM_GRID, config.OPTIMIZATION, X, y)
                 fold_scores, parameters, total_fits = extract_best_fold_scores(pipeline)
                 save_scores(fold_scores, type_name, config.SCORES_PATH, parameters, time, total_fits)
+
+        if config.PLOT_LEARNING_CURVE:
+            plot_learning_curves()
         
     else:
         print("Failed to load data.")
