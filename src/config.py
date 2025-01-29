@@ -9,8 +9,8 @@ DATA_COLUMN_NAME_2 = 'text' # Data column name for the second column
 DATA_LABEL = 'label' # Data column name for the label
 
 # Model training
-TRAIN_MODEL = True  # Train the model?
-TRAIN_OPTIMIZED_MODEL = True # Train the optimized model?
+TRAIN_MODEL = False  # Train the model?
+TRAIN_OPTIMIZED_MODEL = False # Train the optimized model?
 # Optimization methods:
 # 1: GridSearchCV
 # 2: HalvingGridSearchCV
@@ -23,9 +23,8 @@ CREATE_HEATMAP = True # Create the heatmap for the optimized model? (Requires TR
 HEATMAP_H = 6 # Height of the heatmap (1 = 100px)
 HEATMAP_W = 6 # Width of the heatmap (1 = 100px)
 
-PLOT_LEARNING_CURVE = False # Plot the learning curve for the optimized model? (Requires TRAIN_OPTIMIZED_MODEL to be True or trained PKT files)
+PLOT_LEARNING_CURVE = True # Plot the learning curve for the optimized model? (Requires TRAIN_OPTIMIZED_MODEL to be True or trained PKT files)
 PLOT_TEST_LINES = True # Plot the test lines in the learning curve?
-TRAIN_SIZES = [0.1, 0.2, 0.4, 0.6, 0.8, 1.0] # Training sizes for the learning curve
 
 CROSS_VALIDATIONS = 4 # Number of cross-validations  
 NJOBS = -1 # Number of jobs to run in parallel. -1 = all processors.
