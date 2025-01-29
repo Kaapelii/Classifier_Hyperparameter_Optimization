@@ -27,12 +27,15 @@ ENV/
 .env/
 .venv/
 fake_news_classifier/
+local_cache/
+cache/
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+notes.txt
 
 # Distribution / packaging
 .Python
@@ -53,3 +56,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+
+# Processed data and outputs
+data/
+output/
