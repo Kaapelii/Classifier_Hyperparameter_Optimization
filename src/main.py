@@ -1,4 +1,3 @@
-import config
 from utils import make_dirs, load_data, save_scores, extract_best_fold_scores
 from preprocess import preprocess_data, save_data
 from Pipeline.classifier_pipeline import create_pipeline, create_optimized_pipeline
@@ -6,9 +5,9 @@ from sklearn.model_selection import cross_val_score
 from Analytics.learningcurve import plot_learning_curves
 
 import pandas as pd
-import numpy as np
 import joblib
 import os
+import config
 
 def main():
     make_dirs()
