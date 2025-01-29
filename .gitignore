@@ -60,3 +60,5 @@ coverage.xml
 # Processed data and outputs
 data/
 output/
+create_pdf_report.*
+report_config.*
