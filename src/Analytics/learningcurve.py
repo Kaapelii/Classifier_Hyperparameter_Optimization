@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import LearningCurveDisplay
 import joblib
 import config  
+import numpy as np
 
 def plot_learning_curves():
     model_files = [f for f in os.listdir(config.PIPELINE_DIR) if f.endswith('.pkl')]
@@ -15,12 +16,12 @@ def plot_learning_curves():
 
     fig, ax = plt.subplots(figsize=(10, 8))
     model_colors = {
-        "default": ("blue", "cyan"),  
-        "pipeline_GridSearchCV.pkl": ("darkgreen", "forestgreen"),
-        "pipeline_HalvingGridSearchCV.pkl": ("limegreen", "mediumseagreen"),
-        "pipeline_RandomizedSearchCV.pkl": ("brown", "saddlebrown"),
-        "pipeline_HalvingRandomSearchCV.pkl": ("orange", "darkorange"),
-    }
+        "default": "blue",  
+        "pipeline_GridSearchCV.pkl": "darkgreen",
+        "pipeline_HalvingGridSearchCV.pkl": "purple",
+        "pipeline_RandomizedSearchCV.pkl": "red",
+        "pipeline_HalvingRandomSearchCV.pkl": "magenta",
+        }   
     
     for model_file in model_files:
         model_path = os.path.join(config.PIPELINE_DIR, model_file)
@@ -28,9 +29,9 @@ def plot_learning_curves():
         
         # Determine the color for the model
         if model_file in model_colors:
-            train_color, test_color = model_colors[model_file]
+            color = model_colors[model_file]
         else:
-            train_color, test_color = model_colors["default"] 
+            color = model_colors["default"] 
 
         if config.PLOT_TEST_LINES:
             score_type = "both"
@@ -39,17 +40,21 @@ def plot_learning_curves():
         
         # Plot the learning curve 
         display = LearningCurveDisplay.from_estimator(
-            model, X, y, ax=ax, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, std_display_style=None, score_type=score_type, train_sizes=config.TRAIN_SIZES
+            model, X, y, ax=ax, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, std_display_style=None, score_type=score_type, train_sizes=np.linspace(0.1, 1.0, 10)
         )
         
         # Apply colors to train and test lines
+        # Apply colors to train and test lines
         for line, label in zip(display.lines_, ["train", "test"]):
-            line.set_color(train_color if label == "train" else test_color)
-            line.set_linewidth(2.5)  
+            line.set_color(color)
+            line.set_linewidth(2.5)
+            if label == "test":
+                line.set_alpha(0.3)  # Set test line to be semi-transparent
             line.set_label(f"{model_file} ({label})")
+
     
 
-    ax.legend(loc="upper left", fontsize=10)
+    ax.legend(loc="lower right", fontsize=8)
     ax.set_title("Learning Curves", fontsize=16)
     ax.set_xlabel("Training Examples", fontsize=14)
     ax.set_ylabel("Score", fontsize=14)
