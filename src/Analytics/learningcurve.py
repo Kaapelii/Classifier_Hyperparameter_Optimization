@@ -70,10 +70,7 @@ def plot_learning_curves():
         model = joblib.load(model_path)
         
         # Determine the color for the model
-        if model_file in model_colors:
-            color = model_colors[model_file]
-        else:
-            color = model_colors["default"] 
+        style = model_styles.get(model_file, model_styles["default"])
 
         if config.PLOT_TEST_LINES:
             score_type = "both"
@@ -82,7 +79,7 @@ def plot_learning_curves():
         
         # Plot the learning curve 
         display = LearningCurveDisplay.from_estimator(
-            model, X, y, ax=ax, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, std_display_style=None, score_type=score_type, train_sizes=np.linspace(0.1, 1.0, 10)
+            model, X, y, ax=ax, cv=config.CROSS_VALIDATIONS, n_jobs=config.NJOBS, std_display_style=None, score_type=score_type
         )
         
         # Apply colors to train and test lines
@@ -95,8 +92,6 @@ def plot_learning_curves():
           line.set_linewidth(3)
           line.set_alpha(0.4 if label == "test" else 1)
           line.set_label(f"{model_file} ({label})")
-
-    
 
     ax.legend(loc="lower right", fontsize=8)
     ax.set_title("Learning Curves", fontsize=16)
